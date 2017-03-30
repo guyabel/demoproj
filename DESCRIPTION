@@ -4,7 +4,7 @@ Title: Demographic Projection Models
 Version: 0.0.1
 Author: Guy J. Abel
 Maintainer: Guy J. Abel <g.j.abel@gmail.com>
-Description: A series of basic demographic projection models, ranging from simple projection model with a constant future assumption on the population growth rate to a two-sex cohort component projection model and non-constant fertility, mortality and emigration rates and immigration counts.
+Description: Basic demographic projection models, ranging from simple projection model with a constant future assumption on the population growth rate to a two-sex cohort component projection model and non-constant fertility, mortality and emigration rates and immigration counts.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
