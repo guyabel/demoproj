@@ -22,17 +22,17 @@ fccp_closed(n = NULL, x = df0$x, p = NULL, Nx = NULL, sx = NULL,
 
 \item{Nx}{Vector containing numeric values of the initial female population size in each age group (\code{x}).}
 
-\item{sx, fx}{Vector containing numeric values of the age specific female survival and fertility rates.
+\item{sx, fx}{Vectors containing numeric values of the age specific female survival and fertility rates.
 
 If \code{fccp_closed0} is used a single vector is required.
 
-If \code{fccp_closed} is used a matrix of period specific rates is required, where rows represent age groups and columns future periods. If a single vector is be passed to \code{fccp_closed} a matrix based on constant assumptions in all future rates will be constructed.}
+If \code{fccp_closed} is used a matrix of period specific rates is required, where rows represent age groups and columns future periods. If a single vector is passed to \code{fccp_closed} a matrix based on constant assumptions in all future rates will be constructed.}
 
-\item{sn, sex_ratio}{Numeric value of the survivorship of newborn female babies from birth to the end of the interval and the sex ratio at birth of newborn babies.
+\item{sn, sex_ratio}{Numeric value of the survivorship of new-born female babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
 
 If \code{fccp_closed0} is used a single value is required.
 
-If \code{fccp_closed} is used a vector of period specific values is required. If a single value is be passed to \code{fccp_closed} a vector based on constant assumptions in all future rates will be constructed.}
+If \code{fccp_closed} is used a vector of period specific values is required. If a single value is passed to \code{fccp_closed} a vector based on constant assumptions in all future rates will be constructed.}
 
 \item{tidy_output}{Logical value to indicate if projection output should be in a tidy data format (\code{TRUE}, the default) or as a \code{matrix} where rows represent age and gender groups and columns the projection year.}
 
@@ -43,13 +43,13 @@ If \code{fccp_closed} is used a vector of period specific values is required. If
 \value{
 Projected populations by age and gender for \code{n} future steps, given the age specific fertility and survivorship rates. Depending on the \code{tidy_output} value the projections will be returned as either a matrix or a tibble. Both versions contain the initial population sizes given in \code{Nx}.
 
-\code{fccp_closed0} produces population projections based stricly on constant future rates.
+\code{fccp_closed0} produces population projections based strictly on constant future rates.
 
 \code{fccp_closed} produces population projections based non-constant future rates.
 }
 \description{
 A cohort component projection model based on a closed female population,
-\deqn{ \mathbf N(t+5) =  \mathbf L \mathbf N(t)  }
+\deqn{ \mathbf N(t+1) =  \mathbf L[t, t+1] \mathbf N(t)  }
 where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
 }
 \examples{
@@ -73,6 +73,5 @@ ff <- sweep(ff, 2, seq(from = 1, to = 1.5, length = 5), "*")
 # run projection with increasing fx, sx remains constant
 fccp_closed(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
             sx = df0$sx_f, fx = ff, sn = df0$Lx_f[1]/(5*100000),
-            year0 = 1993, age_lab = df0$age,
             tidy_output = FALSE)
 }

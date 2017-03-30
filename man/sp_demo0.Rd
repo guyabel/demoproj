@@ -3,7 +3,7 @@
 \name{sp_demo0}
 \alias{sp_demo0}
 \alias{sp_demo}
-\title{Simple Projection Model Based on Dynamic Crude Demographic Rates}
+\title{Simple Projection Model Based on Crude Demographic Rates}
 \usage{
 sp_demo0(n = NULL, N0 = NULL, b = NULL, d = NULL, m = NULL)
 
@@ -12,30 +12,30 @@ sp_demo(n = NULL, N0 = NULL, b = NULL, d = NULL, m = NULL)
 \arguments{
 \item{n}{Numeric value for the number of projection periods to run the model.}
 
-\item{N0}{Numeric value for the inital total population size.}
+\item{N0}{Numeric value for the initial total population size.}
 
 \item{b, d, m}{Numeric value for the crude birth, death and net migration rate in each projection period.
 
 If \code{sp_demo0} is used a single value is required.
 
-If \code{sp_demo} is used used a vector of period specific rates is required. If a single value is be passed to \code{sp_demo} a vector based on constant assumptions in all future rates will be constructed.}
+If \code{sp_demo} is used a vector of period specific rates is required. If a single rate values are passed to \code{sp_demo} a vector based on constant assumptions in all future rates will be constructed.}
 }
 \value{
 A vector of length \code{n + 1} containing the intial total population size (\code{N0}) and the projected total population sizes given \code{b}, \code{d} and \code{m}.
 
-\code{sp_demo0} produces population projections based stricly on constant future rates.
+\code{sp_demo0} produces population projections based strictly on constant future rates.
 
 \code{sp_demo} produces population projections based non-constant future rates.
 }
 \description{
-A simple projection model based on dynamic crude demographic rates rates,
+A simple projection model based on crude demographic rates,
 \deqn{ N_{t+1} =  N_t + \times (1 + b_{t,t+1} - d_{t,t+1} + m_{t,t+1}) }
 }
 \examples{
-# constant future assummptions
+# constant future assumptions
 sp_demo0(n = 20, N0 = 100, b = 0.04, d = 0.02, m = 0.03)
 
-# non-constant future assummptions
+# non-constant future assumptions
 dd <- rnorm(n = 20, mean = 0.02, sd = 0.001)
 mm <- rnorm(n = 20, mean = 0.03, sd = 0.01)
 sp_demo(n = 20, N0 = 100, b = 0.04, d = dd, m = mm)

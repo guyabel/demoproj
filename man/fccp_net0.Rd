@@ -22,17 +22,17 @@ fccp_net(n = NULL, x = df0$x, p = NULL, Nx = NULL, sx = NULL,
 
 \item{Nx}{Vector containing numeric values of the initial female population size in each age group (\code{x}).}
 
-\item{sx, fx, Mx}{Vector containing numeric values of the age specific female survival and fertility rates and net migration counts.
+\item{sx, fx, Mx}{Vectors containing numeric values of the age specific female survival and fertility rates and net migration counts.
 
 If \code{fccp_net0} is used a single vector is required.
 
-If \code{fccp_net} is used a matrix of period specific rates (or counts for net migraiton) is required, where rows represent age groups and columns future periods. If a single vector is be passed to \code{fccp_net} a matrix based on constant assumptions in all future rates and net migration counts will be constructed.}
+If \code{fccp_net} is used a matrix of period specific rates (or counts for net migration) is required, where rows represent age groups and columns future periods. If a single vector is passed to \code{fccp_net} a matrix based on constant assumptions in all future rates and net migration counts will be constructed.}
 
-\item{sn, sex_ratio}{Numeric value of the survivorship of newborn female babies from birth to the end of the interval and the sex ratio at birth of newborn babies.
+\item{sn, sex_ratio}{Numeric value of the survivorship of new-born female babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
 
 If \code{fccp_net0} is used a single value is required.
 
-If \code{fccp_net} is used a vector of period specific values is required. If a single value is be passed to \code{fccp_net} a vector based on constant assumptions in all future rates will be constructed.}
+If \code{fccp_net} is used a vector of period specific values is required. If a single value is passed to \code{fccp_net} a vector based on constant assumptions in all future rates will be constructed.}
 
 \item{tidy_output}{Logical value to indicate if projection output should be in a tidy data format (\code{TRUE}, the default) or as a \code{matrix} where rows represent age and gender groups and columns the projection year.}
 
@@ -41,15 +41,15 @@ If \code{fccp_net} is used a vector of period specific values is required. If a 
 \item{...}{Additional arguments passed to \code{\link{tidy_pp}} to build a tidy data frame (if chosen from \code{tidy_output}).}
 }
 \value{
-Projected populations by age and gender for \code{n} future steps, given the age specific fertility and survivorship rates. Depending on the \code{tidy_output} value the projections will be returned as either a matrix or a tibble. Both versions contain the initial population sizes given in \code{Nx}.
+Projected populations by age and gender for \code{n} future steps, given the fertility and survivorship rates and net migration counts. Depending on the \code{tidy_output} value the projections will be returned as either a matrix or a tibble. Both versions contain the initial population sizes given in \code{Nx}.
 
-\code{fccp_net0} produces population projections based stricly on constant future rates.
+\code{fccp_net0} produces population projections based strictly on constant future rates.
 
 \code{fccp_net} produces population projections based non-constant future rates.
 }
 \description{
 A cohort component projection model based on a closed female population,
-\deqn{ \mathbf N(t+5) =  \mathbf L \left( \mathbf N(t) + \frac{1}{2} \mathbf M \right) + \frac{1}{2} \mathbf M   }
+\deqn{ \mathbf N(t+5) =  \mathbf L[t, t+1] \left( \mathbf N(t) + \frac{1}{2} \mathbf M[t, t+1] \right) + \frac{1}{2} \mathbf M[t, t+1]   }
 where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
 }
 \examples{
@@ -57,13 +57,17 @@ df0 <- sweden1993
 
 # matrix output
 fccp_net0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
-             sx = df0$sx_f, fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
-             tidy_output = FALSE)
+          sx = df0$sx_f,
+          fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+          Mx = df0$Mx_f,
+          tidy_output = FALSE)
 
 # tidy data frame output
 fccp_net0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
-             sx = df0$sx_f, fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
-             year0 = 1993, age_lab = df0$age)
+          sx = df0$sx_f,
+          fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+          Mx = df0$Mx_f,
+          year0 = 1993, age_lab = df0$age)
 
 # setting up non-constant future net migrant counts
 MM <- matrix(df0$Mx_f, nrow = length(df0$Mx_f), ncol = 5)
@@ -72,8 +76,8 @@ MM <- sweep(MM, 2, seq(from = 1, to = 1.5, length = 5), "*")
 colSums(MM)
 # run projection with increasing net migration, fx and sx remains constant
 fccp_net(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
-         sx = df0$sx_f, fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+         sx = df0$sx_f,
+         fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
          Mx = MM
-         year0 = 1993, age_lab = df0$age,
          tidy_output = FALSE)
 }
