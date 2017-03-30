@@ -5,11 +5,11 @@
 \alias{fccp_net}
 \title{Cohort Component Population Projection Model based on a Female Population with Net Migration.}
 \usage{
-fccp_net0(n = NULL, x = df0$x, p = NULL, Nx = NULL, sx = NULL,
+fccp_net0(n = NULL, x = NULL, p = NULL, Nx = NULL, sx = NULL,
   fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05), Mx = NULL,
   tidy_output = TRUE, age_lab = x, gender_lab = "Female", ...)
 
-fccp_net(n = NULL, x = df0$x, p = NULL, Nx = NULL, sx = NULL,
+fccp_net(n = NULL, x = NULL, p = NULL, Nx = NULL, sx = NULL,
   fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05), Mx = NULL,
   tidy_output = TRUE, age_lab = x, gender_lab = "Female", ...)
 }
@@ -78,6 +78,6 @@ colSums(MM)
 fccp_net(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
          sx = df0$sx_f,
          fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
-         Mx = MM
+         Mx = MM,
          tidy_output = FALSE)
 }

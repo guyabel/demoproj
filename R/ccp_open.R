@@ -13,7 +13,7 @@
 #' If \code{ccp_open0} is used a single vector is required.
 #'
 #' If \code{ccp_open} is used a matrix of period specific rates (or counts for immigration) is required, where rows represent age groups (females in top rows, males in bottom rows) and columns future periods. If a single vector is passed to \code{ccp_open} a matrix based on constant assumptions in all future rates and migration counts will be constructed.
-#' @param sn,sex_ratio Numeric value of the survivorship of new-born babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
+#' @param sn_f,sn_m,sex_ratio Numeric value of the female and male survivorship of new-born babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
 #'
 #' If \code{ccp_open0} is used a single value is required.
 #'
@@ -31,6 +31,7 @@
 #' @export
 #'
 #' @examples
+#' library(dplyr)
 #' df0 <- sweden1993 %>%
 #'    # immigration from estimated count and net age pattern
 #'    mutate(Ix_f = 138000 * Mx_f/sum(Mx_f),
@@ -58,21 +59,20 @@
 #'
 #' # setting up non-constant future male immigrant counts
 #' II <- matrix(df0$Ix_m, nrow = length(df0$Ix_m), ncol = 5)
-#' II <- sweep(MM, 2, seq(from = 1, to = 1.5, length = 5), "*")
-#' # net migration increase
-#' colSums(MM)
+#' II <- sweep(II, 2, seq(from = 1, to = 1.5, length = 5), "*")
+#' # male immigration increase
+#' colSums(II)
 #' # run projection with increasing net migration, fx and sx remains constant
 #' ccp_open(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_m,
 #'          sx_f = df0$sx_f, sx_m = df0$sx_m,
 #'          fx = df0$fx, sn_f = df0$Lx_f[1]/(5*100000), sn_m = df0$Lx_m[1]/(5*100000),
 #'          ex_f = df0$ex_f, ex_m = df0$ex_m, Ix_f = df0$Ix_f, Ix_m = II,
 #'          tidy_output = FALSE)
-ccp_open0 <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
+ccp_open0 <- function(n = NULL, x = NULL, p = NULL, Nx_f= NULL, Nx_m= NULL,
                       sx_f = NULL, sx_m = NULL,
                       fx = NULL, sn_f = NULL, sn_m = NULL, sex_ratio = 1/(1 + 1.05),
                       ex_f = NULL, ex_m = NULL, Ix_f = NULL, Ix_m = NULL,
                       tidy_output = TRUE, age_lab = x, gender_lab = c("Female", "Male"), ...){
-  require(dplyr)
   xx <- length(x)
 
   if(length(sx_f) != xx | length(sx_m) != xx)
@@ -89,12 +89,12 @@ ccp_open0 <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
   #females
   L_f[2:xx, 1:(xx-1)] <- diag(sx_f[-xx] - ex_f[-xx])
   L_f[xx, xx] <- sx_f[xx] - ex_f[xx]
-  L_f[1, 1:xx] <- p * sn_f * sex_ratio * 0.5 * (fx + lead(fx) * (sx_f - ex_f))
+  L_f[1, 1:xx] <- p * sn_f * sex_ratio * 0.5 * (fx + dplyr::lead(fx) * (sx_f - ex_f))
   #males (surviving)
   L_m[2:xx, 1:(xx-1)] <- diag(sx_m[-xx] - ex_m[-xx])
   L_m[xx, xx] <- sx_m[xx] - ex_m[xx]
   #males (births)
-  B_m[1, 1:xx] <- p * sn_m * (1 - sex_ratio) * 0.5 * (fx + lead(fx) * (sx_f - ex_f))
+  B_m[1, 1:xx] <- p * sn_m * (1 - sex_ratio) * 0.5 * (fx + dplyr::lead(fx) * (sx_f - ex_f))
   #bring the blocks together
   L1 <- cbind(L_f, Z)
   L2 <- cbind(B_m, L_m)
@@ -114,7 +114,7 @@ ccp_open0 <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
 }
 #' @export
 #' @rdname ccp_open0
-ccp_open <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
+ccp_open <- function(n = NULL, x = NULL, p = NULL, Nx_f= NULL, Nx_m= NULL,
                      sx_f = NULL, sx_m = NULL,
                      fx = NULL, sn_f = NULL, sn_m = NULL, sex_ratio = 1/(1 + 1.05),
                      ex_f = NULL, ex_m = NULL, Ix_f = NULL, Ix_m = NULL,
@@ -171,10 +171,10 @@ ccp_open <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
     L_f <- L_m <- B_m <- Z <- matrix(0, nrow = xx, ncol = xx)
     L_f[2:xx, 1:(xx-1)] <- diag(sx_f[-xx, i] - ex_f[-xx, i])
     L_f[xx, xx] <- sx_f[xx, i] - ex_f[xx, i]
-    L_f[1, 1:xx] <- p * sn_f[i] * sex_ratio[i] * 0.5 * (fx[, i] + lead(fx[, i]) * (sx_f[, i] - ex_f[, i]))
+    L_f[1, 1:xx] <- p * sn_f[i] * sex_ratio[i] * 0.5 * (fx[, i] + dplyr::lead(fx[, i]) * (sx_f[, i] - ex_f[, i]))
     L_m[2:xx, 1:(xx-1)] <- diag(sx_m[-xx, i] - ex_m[-xx, i])
     L_m[xx, xx] <- sx_m[xx, i] - ex_m[xx, i]
-    B_m[1, 1:xx] <- p * sn_m[i] * (1 - sex_ratio[i]) * 0.5 * (fx[, i] + lead(fx[, i]) * (sx_f[, i] - ex_f[, i]))
+    B_m[1, 1:xx] <- p * sn_m[i] * (1 - sex_ratio[i]) * 0.5 * (fx[, i] + dplyr::lead(fx[, i]) * (sx_f[, i] - ex_f[, i]))
     L1 <- cbind(L_f, Z)
     L2 <- cbind(B_m, L_m)
     L <- rbind(L1, L2)

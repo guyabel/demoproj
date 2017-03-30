@@ -56,9 +56,9 @@
 #' fccp_net(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
 #'          sx = df0$sx_f,
 #'          fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
-#'          Mx = MM
+#'          Mx = MM,
 #'          tidy_output = FALSE)
-fccp_net0 <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
+fccp_net0 <- function(n = NULL, x = NULL, p = NULL, Nx = NULL,
                       sx = NULL,
                       fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05),
                       Mx = NULL,
@@ -76,7 +76,7 @@ fccp_net0 <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
   L <- matrix(0, nrow = xx, ncol = xx)
   L[2:xx, 1:(xx-1)] <- diag(sx[-xx])
   L[xx, xx] <- sx[xx]
-  L[1, 1:xx] <- p * sn * sex_ratio * 0.5 * (fx + lead(fx) * sx)
+  L[1, 1:xx] <- p * sn * sex_ratio * 0.5 * (fx + dplyr::lead(fx) * sx)
   L[is.na(L)] <- 0
 
   WW <- matrix(NA, nrow = xx, ncol = n + 1)
@@ -91,12 +91,11 @@ fccp_net0 <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
 }
 #' @export
 #' @rdname fccp_net0
-fccp_net <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
+fccp_net <- function(n = NULL, x = NULL, p = NULL, Nx = NULL,
                      sx = NULL,
                      fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05),
                      Mx = NULL,
                      tidy_output = TRUE, age_lab = x, gender_lab = "Female", ...){
-  require(dplyr)
   xx <- length(x)
 
   if(!is.matrix(sx))
@@ -127,7 +126,7 @@ fccp_net <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
     L <- matrix(0, nrow = xx, ncol = xx)
     L[2:xx, 1:(xx-1)] <- diag(sx[-xx, i])
     L[xx, xx] <- sx[xx, i]
-    L[1, 1:xx] <- p * sn[i] * sex_ratio[i] * 0.5 * (fx[,i] + lead(fx[,i]) * sx[,i])
+    L[1, 1:xx] <- p * sn[i] * sex_ratio[i] * 0.5 * (fx[,i] + dplyr::lead(fx[,i]) * sx[,i])
     L[is.na(L)] <- 0
 
     WW[,i+1] <- L %*% (WW[,i] + Mx[,i]/2) + Mx[,i]/2

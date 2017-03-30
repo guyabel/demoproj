@@ -5,12 +5,12 @@
 \alias{ccp_closed}
 \title{Cohort Component Population Projection Model based on a Closed Population.}
 \usage{
-ccp_closed0(n = NULL, x = df0$x, p = NULL, Nx_f = NULL, Nx_m = NULL,
+ccp_closed0(n = NULL, x = NULL, p = NULL, Nx_f = NULL, Nx_m = NULL,
   sx_f = NULL, sx_m = NULL, fx = NULL, sn_f = NULL, sn_m = NULL,
   sex_ratio = 1/(1 + 1.05), tidy_output = TRUE, age_lab = x,
   gender_lab = c("Female", "Male"), ...)
 
-ccp_closed(n = NULL, x = df0$x, p = NULL, Nx_f = NULL, Nx_m = NULL,
+ccp_closed(n = NULL, x = NULL, p = NULL, Nx_f = NULL, Nx_m = NULL,
   sx_f = NULL, sx_m = NULL, fx = NULL, sn_f = NULL, sn_m = NULL,
   sex_ratio = 1/(1 + 1.05), tidy_output = TRUE, age_lab = x,
   gender_lab = c("Female", "Male"), ...)
@@ -30,17 +30,17 @@ If \code{ccp_closed0} is used a single vector is required.
 
 If \code{ccp_closed} is used a matrix of period specific rates is required, where rows represent age groups (females in top rows, males in bottom rows) and columns future periods. If a single vector is passed to \code{ccp_closed} a matrix based on constant assumptions in all future rates will be constructed.}
 
+\item{sn_f, sn_m, sex_ratio}{Numeric value of the female and male survivorship of new-born babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
+
+If \code{ccp_closed0} is used a single value is required.
+
+If \code{ccp_closed} is used a vector of period specific values is required. If a single value is passed to \code{ccp_closed} a vector based on constant assumptions in all future rates will be constructed.}
+
 \item{tidy_output}{Logical value to indicate if projection output should be in a tidy data format (\code{TRUE}, the default) or as a \code{matrix} where rows represent age and gender groups and columns the projection year.}
 
 \item{age_lab, gender_lab}{Vector containing a character string of age and gender group labels. Only used if projection output is in a tidy data format. See \code{tidy_pp} for more details.}
 
 \item{...}{Additional arguments passed to \code{\link{tidy_pp}} to build a tidy data frame (if chosen from \code{tidy_output}).}
-
-\item{sn, sex_ratio}{Numeric value of the survivorship of new-born babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
-
-If \code{ccp_closed0} is used a single value is required.
-
-If \code{ccp_closed} is used a vector of period specific values is required. If a single value is passed to \code{ccp_closed} a vector based on constant assumptions in all future rates will be constructed.}
 }
 \value{
 Projected populations by age and gender for \code{n} future steps, given the age specific fertility and survivorship rates. Depending on the \code{tidy_output} value the projections will be returned as either a matrix or a tibble. Both versions contain the initial population sizes given in \code{Nx}.
@@ -64,8 +64,9 @@ ccp_closed0(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_f,
             tidy_output = FALSE)
 
 # tidy data frame output
-ccp_closed0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
-             sx = df0$sx_f, fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+ccp_closed0(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_f,
+            sx_f = df0$sx_f, sx_m = df0$sx_f,
+            fx = df0$fx, sn_f = df0$Lx_f[1]/(5*100000), sn_m = df0$Lx_m[1]/(5*100000),
              year0 = 1993, age_lab = df0$age)
 
 # setting up non-constant future age specific fertility rates
@@ -76,6 +77,6 @@ ff <- sweep(ff, 2, seq(from = 1, to = 1.5, length = 5), "*")
 # run projection with increasing fx, sx remains constant
 ccp_closed(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_f,
             sx_f = df0$sx_f, sx_m = df0$sx_f,
-            fx = ff, sn_f = df0$Lx_f[1]/(5*100000), sn_m = df0$Lx_m[1]/(5*100000)),
+            fx = ff, sn_f = df0$Lx_f[1]/(5*100000), sn_m = df0$Lx_m[1]/(5*100000),
             tidy_output = FALSE)
 }

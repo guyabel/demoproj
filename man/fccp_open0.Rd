@@ -5,12 +5,12 @@
 \alias{fccp_open}
 \title{Cohort Component Population Projection Model based on a Female Population with Emigration and Immigration.}
 \usage{
-fccp_open0(n = NULL, x = df0$x, p = NULL, Nx = NULL, sx = NULL,
+fccp_open0(n = NULL, x = NULL, p = NULL, Nx = NULL, sx = NULL,
   fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05), ex = NULL,
   Ix = NULL, tidy_output = TRUE, age_lab = x, gender_lab = "Female",
   ...)
 
-fccp_open(n = NULL, x = df0$x, p = NULL, Nx = NULL, sx = NULL,
+fccp_open(n = NULL, x = NULL, p = NULL, Nx = NULL, sx = NULL,
   fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05), ex = NULL,
   Ix = NULL, tidy_output = TRUE, age_lab = x, gender_lab = "Female",
   ...)
@@ -55,7 +55,7 @@ A cohort component projection model based on a closed female population,
 where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
 }
 \examples{
-data(sweden1993)
+library(dplyr)
 df0 <- sweden1993 \%>\%
     #immigration from estimated count and net age pattern
     mutate(Ix_f = 138000 * Mx_f/sum(Mx_f),
@@ -73,6 +73,11 @@ fccp_open0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
            tidy_output = FALSE)
 
 # tidy data frame output
+fccp_open0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
+           sx = df0$sx_f,
+           fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+           ex = df0$ex_f, Ix = df0$Ix_f,
+           year0 = 1993, age_lab = df0$age)
 
 # setting up non-constant future immigrant counts
 II <- matrix(df0$Ix_f, nrow = length(df0$Ix_f), ncol = 5)

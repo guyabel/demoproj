@@ -5,13 +5,13 @@
 \alias{ccp_open}
 \title{Cohort Component Population Projection Model based on a Population with Emigration and Immigration.}
 \usage{
-ccp_open0(n = NULL, x = df0$x, p = NULL, Nx_f = NULL, Nx_m = NULL,
+ccp_open0(n = NULL, x = NULL, p = NULL, Nx_f = NULL, Nx_m = NULL,
   sx_f = NULL, sx_m = NULL, fx = NULL, sn_f = NULL, sn_m = NULL,
   sex_ratio = 1/(1 + 1.05), ex_f = NULL, ex_m = NULL, Ix_f = NULL,
   Ix_m = NULL, tidy_output = TRUE, age_lab = x, gender_lab = c("Female",
   "Male"), ...)
 
-ccp_open(n = NULL, x = df0$x, p = NULL, Nx_f = NULL, Nx_m = NULL,
+ccp_open(n = NULL, x = NULL, p = NULL, Nx_f = NULL, Nx_m = NULL,
   sx_f = NULL, sx_m = NULL, fx = NULL, sn_f = NULL, sn_m = NULL,
   sex_ratio = 1/(1 + 1.05), ex_f = NULL, ex_m = NULL, Ix_f = NULL,
   Ix_m = NULL, tidy_output = TRUE, age_lab = x, gender_lab = c("Female",
@@ -32,17 +32,17 @@ If \code{ccp_open0} is used a single vector is required.
 
 If \code{ccp_open} is used a matrix of period specific rates (or counts for immigration) is required, where rows represent age groups (females in top rows, males in bottom rows) and columns future periods. If a single vector is passed to \code{ccp_open} a matrix based on constant assumptions in all future rates and migration counts will be constructed.}
 
+\item{sn_f, sn_m, sex_ratio}{Numeric value of the female and male survivorship of new-born babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
+
+If \code{ccp_open0} is used a single value is required.
+
+If \code{ccp_open} is used a vector of period specific values is required. If a single value is passed to \code{ccp_open} a vector based on constant assumptions in all future rates will be constructed.}
+
 \item{tidy_output}{Logical value to indicate if projection output should be in a tidy data format (\code{TRUE}, the default) or as a \code{matrix} where rows represent age and gender groups and columns the projection year.}
 
 \item{age_lab, gender_lab}{Vector containing a character string of age and gender group labels. Only used if projection output is in a tidy data format. See \code{tidy_pp} for more details.}
 
 \item{...}{Additional arguments passed to \code{\link{tidy_pp}} to build a tidy data frame (if chosen from \code{tidy_output}).}
-
-\item{sn, sex_ratio}{Numeric value of the survivorship of new-born babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
-
-If \code{ccp_open0} is used a single value is required.
-
-If \code{ccp_open} is used a vector of period specific values is required. If a single value is passed to \code{ccp_open} a vector based on constant assumptions in all future rates will be constructed.}
 }
 \value{
 Projected populations by age and gender for \code{n} future steps, given the age specific fertility, survivorship and emigration rates and immigration counts. Depending on the \code{tidy_output} value the projections will be returned as either a matrix or a tibble. Both versions contain the initial population sizes given in \code{Nx}.
@@ -57,6 +57,7 @@ A cohort component projection model based on a closed population,
 where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
 }
 \examples{
+library(dplyr)
 df0 <- sweden1993 \%>\%
    # immigration from estimated count and net age pattern
    mutate(Ix_f = 138000 * Mx_f/sum(Mx_f),
@@ -84,9 +85,9 @@ ccp_open0(n = 5, x = df0$x, p = 5,Nx_f = df0$Nx_f, Nx_m = df0$Nx_m,
 
 # setting up non-constant future male immigrant counts
 II <- matrix(df0$Ix_m, nrow = length(df0$Ix_m), ncol = 5)
-II <- sweep(MM, 2, seq(from = 1, to = 1.5, length = 5), "*")
-# net migration increase
-colSums(MM)
+II <- sweep(II, 2, seq(from = 1, to = 1.5, length = 5), "*")
+# male immigration increase
+colSums(II)
 # run projection with increasing net migration, fx and sx remains constant
 ccp_open(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_m,
          sx_f = df0$sx_f, sx_m = df0$sx_m,

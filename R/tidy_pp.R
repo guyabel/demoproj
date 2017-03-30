@@ -16,34 +16,41 @@
 #' @return A tibble containing four columns. The first three contain information on the year, age and gender of the projection population. The fourth contain information in the projected population sizes or each year-age-gender combination.
 #'
 #' @export
+#' @importFrom magrittr %>%
+#' @importFrom tidyr gather
 #'
 #' @examples
-#' pp <- fccp_closed()
-#' proj_df(proj_mat = pp, year0 = 1993, steps = 5,
-#'         age_lab = , gender_lab = "Female")
+#' df0 <- sweden1993
+#'
+#' # matrix output
+#' pp <- fccp_closed0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
+#'                    sx = df0$sx_f, fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+#'                    tidy_output = FALSE)
+#' pp
+#'
+#' tidy_pp(proj_mat = pp, year0 = 1993, steps = 5,
+#'         age_lab = df0$age, gender_lab = "Female")
 tidy_pp <- function(proj_mat = NULL, year0 = 0, steps = NULL,
                     age_lab = NULL, gender_lab = c("Female", "Male"),
                     year_col = "Year", age_col = "Age", gender_col = "Gender", pop_col = "Population",
                     denom = 1000){
-  require(dplyr)
-  require(tidyr)
   g <- length(gender_lab)
   a <- length(age_lab)
   if(nrow(proj_mat) != a*g)
     stop("Number of rows of proj_mat must match the length of age_lab * length of gender_lab")
 
   df0 <- proj_mat %>%
-    tbl_df() %>%
+    dplyr::tbl_df() %>%
     #to allow for one or two genders in proj_mat
-    mutate(age = rep(age_lab, times = g),
+    dplyr::mutate(age = rep(age_lab, times = g),
            gender = rep(gender_lab, each = a) ) %>%
-    gather(key = year, value = pop, -age, -gender) %>%
+    tidyr::gather(key = year, value = pop, -age, -gender) %>%
     #format Year and Population depending on the argument inputs
-    mutate(year = gsub(pattern = "V", replacement = "", x = year),
+    dplyr::mutate(year = gsub(pattern = "V", replacement = "", x = year),
            year = as.numeric(year),
            year = year0 + (year*steps - steps),
            pop = pop/denom) %>%
-    select(year, gender, age, pop) %>%
-    setNames(c(year_col, gender_col, age_col, pop_col))
+    dplyr::select(year, gender, age, pop) %>%
+    stats::setNames(c(year_col, gender_col, age_col, pop_col))
   return(df0)
 }

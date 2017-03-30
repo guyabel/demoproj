@@ -5,11 +5,11 @@
 \alias{fccp_closed}
 \title{Cohort Component Population Projection Model based on a Closed Female Population.}
 \usage{
-fccp_closed0(n = NULL, x = df0$x, p = NULL, Nx = NULL, sx = NULL,
+fccp_closed0(n = NULL, x = NULL, p = NULL, Nx = NULL, sx = NULL,
   fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05), tidy_output = TRUE,
   age_lab = x, gender_lab = "Female", ...)
 
-fccp_closed(n = NULL, x = df0$x, p = NULL, Nx = NULL, sx = NULL,
+fccp_closed(n = NULL, x = NULL, p = NULL, Nx = NULL, sx = NULL,
   fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05), tidy_output = TRUE,
   age_lab = x, gender_lab = "Female", ...)
 }

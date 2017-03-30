@@ -31,7 +31,7 @@
 #' @export
 #'
 #' @examples
-#' data(sweden1993)
+#' library(dplyr)
 #' df0 <- sweden1993 %>%
 #'     #immigration from estimated count and net age pattern
 #'     mutate(Ix_f = 138000 * Mx_f/sum(Mx_f),
@@ -49,11 +49,11 @@
 #'            tidy_output = FALSE)
 #'
 #' # tidy data frame output
-# fccp_open0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
-#            sx = df0$sx_f,
-#            fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
-#            ex = df0$ex_f, Ix = df0$Ix_f,
-#            year0 = 1993, age_lab = df0$age)
+#' fccp_open0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
+#'            sx = df0$sx_f,
+#'            fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+#'            ex = df0$ex_f, Ix = df0$Ix_f,
+#'            year0 = 1993, age_lab = df0$age)
 #'
 #' # setting up non-constant future immigrant counts
 #' II <- matrix(df0$Ix_f, nrow = length(df0$Ix_f), ncol = 5)
@@ -66,7 +66,7 @@
 #'           fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
 #'           ex = df0$ex_f, Ix = II,
 #'           tidy_output = FALSE)
-fccp_open0 <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
+fccp_open0 <- function(n = NULL, x = NULL, p = NULL, Nx = NULL,
                        sx = NULL,
                        fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05),
                        ex = NULL, Ix = NULL,
@@ -86,7 +86,7 @@ fccp_open0 <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
   L <- matrix(0, nrow = xx, ncol = xx)
   L[2:xx, 1:(xx-1)] <- diag(sx[-xx] - ex[-xx])
   L[xx, xx] <- sx[xx] - ex[xx]
-  L[1, 1:xx] <- p * sn * sex_ratio * 0.5 * (fx + lead(fx) * (sx - ex))
+  L[1, 1:xx] <- p * sn * sex_ratio * 0.5 * (fx + dplyr::lead(fx) * (sx - ex))
   L[is.na(L)] <- 0
 
   WW <- matrix(NA, nrow = xx, ncol = n + 1)
@@ -101,12 +101,11 @@ fccp_open0 <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
 }
 #' @export
 #' @rdname fccp_open0
-fccp_open <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
+fccp_open <- function(n = NULL, x = NULL, p = NULL, Nx = NULL,
                       sx = NULL,
                       fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05),
                       ex = NULL, Ix = NULL,
                       tidy_output = TRUE, age_lab = x, gender_lab = "Female", ...){
-  require(dplyr)
   xx <- length(x)
 
   if(!is.matrix(sx))
@@ -141,7 +140,7 @@ fccp_open <- function(n = NULL, x = df0$x, p = NULL, Nx = NULL,
     L <- matrix(0, nrow = xx, ncol = xx)
     L[2:xx, 1:(xx-1)] <- diag(sx[-xx, i] - ex[-xx, i])
     L[xx, xx] <- sx[xx, i] - ex[xx, i]
-    L[1, 1:xx] <- p * sn[i] * sex_ratio[i] * 0.5 * (fx[,i] + lead(fx[,i]) * (sx[,i] - ex[,i]) )
+    L[1, 1:xx] <- p * sn[i] * sex_ratio[i] * 0.5 * (fx[,i] + dplyr::lead(fx[,i]) * (sx[,i] - ex[,i]) )
     L[is.na(L)] <- 0
 
     WW[,i+1] <- L %*% (WW[,i] + Ix[,i]/2) + Ix[,i]/2

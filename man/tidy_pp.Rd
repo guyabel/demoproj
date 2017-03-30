@@ -36,7 +36,14 @@ A tibble containing four columns. The first three contain information on the yea
 Gathers a population projection matrix and converts it into a tidy data frame with labels for projection year, age and gender groups.
 }
 \examples{
-pp <- fccp_closed()
-proj_df(proj_mat = pp, year0 = 1993, steps = 5,
-        age_lab = , gender_lab = "Female")
+df0 <- sweden1993
+
+# matrix output
+pp <- fccp_closed0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
+                   sx = df0$sx_f, fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+                   tidy_output = FALSE)
+pp
+
+tidy_pp(proj_mat = pp, year0 = 1993, steps = 5,
+        age_lab = df0$age, gender_lab = "Female")
 }

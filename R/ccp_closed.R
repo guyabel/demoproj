@@ -13,7 +13,7 @@
 #' If \code{ccp_closed0} is used a single vector is required.
 #'
 #' If \code{ccp_closed} is used a matrix of period specific rates is required, where rows represent age groups (females in top rows, males in bottom rows) and columns future periods. If a single vector is passed to \code{ccp_closed} a matrix based on constant assumptions in all future rates will be constructed.
-#' @param sn,sex_ratio Numeric value of the survivorship of new-born babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
+#' @param sn_f,sn_m,sex_ratio Numeric value of the female and male survivorship of new-born babies from birth to the end of the interval and the sex ratio at birth of new-born babies.
 #'
 #' If \code{ccp_closed0} is used a single value is required.
 #'
@@ -40,8 +40,9 @@
 #'             tidy_output = FALSE)
 #'
 #' # tidy data frame output
-#' ccp_closed0(n = 5, x = df0$x, p = 5, Nx = df0$Nx_f,
-#'              sx = df0$sx_f, fx = df0$fx, sn = df0$Lx_f[1]/(5*100000),
+#' ccp_closed0(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_f,
+#'             sx_f = df0$sx_f, sx_m = df0$sx_f,
+#'             fx = df0$fx, sn_f = df0$Lx_f[1]/(5*100000), sn_m = df0$Lx_m[1]/(5*100000),
 #'              year0 = 1993, age_lab = df0$age)
 #'
 #' # setting up non-constant future age specific fertility rates
@@ -52,13 +53,12 @@
 #' # run projection with increasing fx, sx remains constant
 #' ccp_closed(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_f,
 #'             sx_f = df0$sx_f, sx_m = df0$sx_f,
-#'             fx = ff, sn_f = df0$Lx_f[1]/(5*100000), sn_m = df0$Lx_m[1]/(5*100000)),
+#'             fx = ff, sn_f = df0$Lx_f[1]/(5*100000), sn_m = df0$Lx_m[1]/(5*100000),
 #'             tidy_output = FALSE)
-ccp_closed0 <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
+ccp_closed0 <- function(n = NULL, x = NULL, p = NULL, Nx_f= NULL, Nx_m= NULL,
                         sx_f = NULL, sx_m = NULL,
                         fx = NULL, sn_f = NULL, sn_m = NULL, sex_ratio = 1/(1 + 1.05),
                         tidy_output = TRUE, age_lab = x, gender_lab = c("Female", "Male"), ...){
-  require(dplyr)
   xx <- length(x)
 
   if(length(sx_f) != xx | length(sx_m) != xx)
@@ -71,12 +71,12 @@ ccp_closed0 <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
   #females
   L_f[2:xx, 1:(xx-1)] <- diag(sx_f[-xx])
   L_f[xx, xx] <- sx_f[xx]
-  L_f[1, 1:xx] <- p * sn_f * sex_ratio * 0.5 * (fx + lead(fx) * sx_f)
+  L_f[1, 1:xx] <- p * sn_f * sex_ratio * 0.5 * (fx + dplyr::lead(fx) * sx_f)
   #males (surviving)
   L_m[2:xx, 1:(xx-1)] <- diag(sx_m[-xx])
   L_m[xx, xx] <- sx_m[xx]
   #males (births)
-  B_m[1, 1:xx] <- p * sn_m * (1 - sex_ratio) * 0.5 * (fx + lead(fx) * sx_f)
+  B_m[1, 1:xx] <- p * sn_m * (1 - sex_ratio) * 0.5 * (fx + dplyr::lead(fx) * sx_f)
   #bring the blocks together
   L1 <- cbind(L_f, Z)
   L2 <- cbind(B_m, L_m)
@@ -95,7 +95,7 @@ ccp_closed0 <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
 }
 #' @export
 #' @rdname ccp_closed0
-ccp_closed <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
+ccp_closed <- function(n = NULL, x = NULL, p = NULL, Nx_f= NULL, Nx_m= NULL,
                       sx_f = NULL, sx_m = NULL,
                       fx = NULL, sn_f = NULL, sn_m = NULL, sex_ratio = 1/(1 + 1.05),
                       tidy_output = TRUE, age_lab = x, gender_lab = c("Female", "Male"), ...){
@@ -134,10 +134,10 @@ ccp_closed <- function(n = NULL, x = df0$x, p = NULL, Nx_f= NULL, Nx_m= NULL,
     L_f <- L_m <- B_m <- Z <- matrix(0, nrow = xx, ncol = xx)
     L_f[2:xx, 1:(xx-1)] <- diag(sx_f[-xx, i])
     L_f[xx, xx] <- sx_f[xx, i]
-    L_f[1, 1:xx] <- p * sn_f[i] * sex_ratio[i] * 0.5 * (fx[, i] + lead(fx[, i]) * sx_f[, i])
+    L_f[1, 1:xx] <- p * sn_f[i] * sex_ratio[i] * 0.5 * (fx[, i] + dplyr::lead(fx[, i]) * sx_f[, i])
     L_m[2:xx, 1:(xx-1)] <- diag(sx_m[-xx, i])
     L_m[xx, xx] <- sx_m[xx]
-    B_m[1, 1:xx] <- p * sn_m[i] * (1 - sex_ratio[i]) * 0.5 * (fx[, i] + lead(fx[, i]) * sx_f[, i])
+    B_m[1, 1:xx] <- p * sn_m[i] * (1 - sex_ratio[i]) * 0.5 * (fx[, i] + dplyr::lead(fx[, i]) * sx_f[, i])
     L1 <- cbind(L_f, Z)
     L2 <- cbind(B_m, L_m)
     L <- rbind(L1, L2)
