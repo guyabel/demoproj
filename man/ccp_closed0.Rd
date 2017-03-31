@@ -67,7 +67,7 @@ ccp_closed0(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_f,
 ccp_closed0(n = 5, x = df0$x, p = 5, Nx_f = df0$Nx_f, Nx_m = df0$Nx_f,
             sx_f = df0$sx_f, sx_m = df0$sx_f,
             fx = df0$fx, sn_f = df0$Lx_f[1]/(5*100000), sn_m = df0$Lx_m[1]/(5*100000),
-             year0 = 1993, age_lab = df0$age)
+            year0 = 1993, age_lab = df0$age)
 
 # setting up non-constant future age specific fertility rates
 ff <- matrix(df0$fx, nrow = length(df0$fx), ncol = 5)
