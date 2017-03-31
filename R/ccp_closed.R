@@ -1,8 +1,8 @@
 #' Cohort Component Population Projection Model based on a Closed Population.
 #'
 #' A cohort component projection model based on a closed population,
-#' \deqn{ \mathbf N(t+1) =  \mathbf L[t, t+1] \mathbf N(t)  }
-#' where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
+#' \deqn{ N(t+1) =  L[t, t+1] N(t)  }
+#' where the Leslie matrix, eqn{L}, is created given user defined age specific fertility and survivorship rates.
 #'
 #' @param n Numeric value for the number of projection steps.
 #' @param x Vector containing a character string of age group labels.
@@ -99,7 +99,7 @@ ccp_closed <- function(n = NULL, x = NULL, p = NULL, Nx_f= NULL, Nx_m= NULL,
                       sx_f = NULL, sx_m = NULL,
                       fx = NULL, sn_f = NULL, sn_m = NULL, sex_ratio = 1/(1 + 1.05),
                       tidy_output = TRUE, age_lab = x, gender_lab = c("Female", "Male"), ...){
-  require(dplyr)
+
   xx <- length(x)
 
   if(!is.matrix(sx_f))

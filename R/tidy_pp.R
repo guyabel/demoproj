@@ -17,7 +17,6 @@
 #'
 #' @export
 #' @importFrom magrittr %>%
-#' @importFrom tidyr gather
 #'
 #' @examples
 #' df0 <- sweden1993
@@ -38,6 +37,9 @@ tidy_pp <- function(proj_mat = NULL, year0 = 0, steps = NULL,
   a <- length(age_lab)
   if(nrow(proj_mat) != a*g)
     stop("Number of rows of proj_mat must match the length of age_lab * length of gender_lab")
+  # not sure why, but need this bullshit line
+  # http://stackoverflow.com/questions/9439256/how-can-i-handle-r-cmd-check-no-visible-binding-for-global-variable-notes-when
+  year <- pop <- age <- gender <- NULL
 
   df0 <- proj_mat %>%
     dplyr::tbl_df() %>%

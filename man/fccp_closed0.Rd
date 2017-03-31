@@ -49,8 +49,8 @@ Projected populations by age and gender for \code{n} future steps, given the age
 }
 \description{
 A cohort component projection model based on a closed female population,
-\deqn{ \mathbf N(t+1) =  \mathbf L[t, t+1] \mathbf N(t)  }
-where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
+\deqn{ N(t+1) =  L[t, t+1] N(t)  }
+where the Leslie matrix, eqn{L}, is created given user defined age specific fertility and survivorship rates.
 }
 \examples{
 df0 <- sweden1993

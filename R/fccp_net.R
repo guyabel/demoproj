@@ -1,8 +1,8 @@
 #' Cohort Component Population Projection Model based on a Female Population with Net Migration.
 #'
 #' A cohort component projection model based on a closed female population,
-#' \deqn{ \mathbf N(t+5) =  \mathbf L[t, t+1] \left( \mathbf N(t) + \frac{1}{2} \mathbf M[t, t+1] \right) + \frac{1}{2} \mathbf M[t, t+1]   }
-#' where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
+#' \deqn{ N(t+5) =  L[t, t+1] \left( N(t) + \frac{1}{2} M[t, t+1] \right) + \frac{1}{2} M[t, t+1]   }
+#' where the Leslie matrix, eqn{L}, is created given user defined age specific fertility and survivorship rates.
 #'
 #' @param n Numeric value for the number of projection steps.
 #' @param x Vector containing a character string of age group labels.
@@ -63,7 +63,7 @@ fccp_net0 <- function(n = NULL, x = NULL, p = NULL, Nx = NULL,
                       fx = NULL, sn = NULL, sex_ratio = 1/(1 + 1.05),
                       Mx = NULL,
                       tidy_output = TRUE, age_lab = x, gender_lab = "Female", ...){
-  require(dplyr)
+
   xx <- length(x)
 
   if(length(sx) != xx)

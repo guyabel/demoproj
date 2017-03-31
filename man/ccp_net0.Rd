@@ -51,8 +51,8 @@ Projected populations by age and gender for \code{n} future steps, given the fer
 }
 \description{
 A cohort component projection model based on a closed population,
-\deqn{ \mathbf N(t+5) =  \mathbf L[t, t+1] \left( \mathbf N(t) + \frac{1}{2} \mathbf M[t, t+1] \right) + \frac{1}{2} \mathbf M[t, t+1]   }
-where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
+\deqn{ N(t+5) =  L[t, t+1] \left( N(t) + \frac{1}{2} M[t, t+1] \right) + \frac{1}{2} M[t, t+1]   }
+where the Leslie matrix, eqn{L}, is created given user defined age specific fertility and survivorship rates.
 }
 \examples{
 library(dplyr)

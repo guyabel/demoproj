@@ -1,8 +1,8 @@
 #' Cohort Component Population Projection Model based on a Population with Emigration and Immigration.
 #'
 #' A cohort component projection model based on a closed population,
-#' \deqn{ \mathbf N(t+5) =  \mathbf L[t,t+5] \left( \mathbf N(t) + \frac{1}{2} \mathbf I[t,t+5] \right) + \frac{1}{2} \mathbf I[t,t+5]    }
-#' where the Leslie matrix, eqn{\mathbf L}, is created given user defined age specific fertility and survivorship rates.
+#' \deqn{ N(t+5) =  L[t,t+5] \left( N(t) + \frac{1}{2} I[t,t+5] \right) + \frac{1}{2} I[t,t+5]    }
+#' where the Leslie matrix, eqn{L}, is created given user defined age specific fertility and survivorship rates.
 #'
 #' @param n Numeric value for the number of projection steps.
 #' @param x Vector containing a character string of age group labels.
@@ -119,7 +119,7 @@ ccp_open <- function(n = NULL, x = NULL, p = NULL, Nx_f= NULL, Nx_m= NULL,
                      fx = NULL, sn_f = NULL, sn_m = NULL, sex_ratio = 1/(1 + 1.05),
                      ex_f = NULL, ex_m = NULL, Ix_f = NULL, Ix_m = NULL,
                      tidy_output = TRUE, age_lab = x, gender_lab = c("Female", "Male"), ...){
-  require(dplyr)
+
   xx <- length(x)
 
   if(!is.matrix(sx_f))
